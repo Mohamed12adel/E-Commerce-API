@@ -1,100 +1,262 @@
-# Course Material and FAQ for my NodeJS - Build a Full E-Commerce RESTful APIs (بالعربي) 
+# 🛒 E-Commerce RESTful API
 
-This repo contains every course section in a single branch  and the finished project files for all the projects contained in the master branch
+A full-featured Node.js E-Commerce REST API built with Express.js and MongoDB. Provides a complete backend solution for an online store including authentication, product management, cart, orders, payments, and more.
 
-Choose the section branch that you study, and **final code to compare it with your own code whenever something doesn't work**!
+---
 
-## Join To Discord Channel For Updates [discord](https://discord.gg/e2nwBNU2q9) 
+## 📋 Table of Contents
 
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [API Endpoints](#api-endpoints)
+- [Authentication](#authentication)
+- [Security](#security)
 
-👇 **_Please read the following Frequently Asked Questions (FAQ) carefully before starting the course_** 👇
+---
 
-## FAQ
+## ✨ Features
 
-### Q1: How do I download the files?
+- **Authentication & Authorization** — JWT-based auth with role-based access control (User, Manager, Admin)
+- **Product Management** — Full CRUD with categories, subcategories, brands, image uploads, ratings, and reviews
+- **Shopping Cart** — Add/update/remove items, apply discount coupons
+- **Wishlist** — Save and manage favorite products
+- **Orders & Payments** — Cash on delivery + Stripe card payments with webhook support
+- **User Profiles** — Multiple saved addresses, order history, profile images
+- **Advanced Querying** — Search, filtering, sorting, and pagination on products
+- **Email Notifications** — Password reset and account emails via Nodemailer
 
-**A:** If you're new to GitHub and just want to download the entire code, hit the green button saying "Code", and then choose the "Download ZIP" option.
+---
 
+## 🛠 Tech Stack
 
-### Q2: I'm stuck in one of the projects. Where do I get help?
+| Category | Technology |
+|---|---|
+| Runtime | Node.js |
+| Framework | Express.js |
+| Database | MongoDB + Mongoose |
+| Authentication | JWT, Bcryptjs |
+| Payment | Stripe |
+| Image Processing | Sharp, Multer |
+| Email | Nodemailer |
+| Validation | Express-validator, Zod |
+| Utilities | Slugify, UUID |
+| Dev Tools | Nodemon, Morgan, ESLint, Prettier |
 
-**A:** Have you actually tried to fix the problem on your own? Have you compared your code to the final code? If you failed fixing your problem, please **post a detailed description of the problem to the Q&A area of that video over at Udemy**, along with a [codepen](https://codepen.io/pen/) containing your code. You will get help there. Please don't send me a personal message or email to fix coding problems.
+---
 
+## 📁 Project Structure
 
-### Q3: I want to put the project in my portfolio. Is that allowed?
+```
+├── config/             # Database configuration
+├── controllers/        # Route handlers / business logic
+├── models/             # Mongoose schemas
+├── routes/             # API route definitions
+├── middlewares/        # Custom middlewares (auth, error handling, etc.)
+├── utils/              # Utility functions and validators
+├── uploads/            # Uploaded images (gitignored)
+└── server.js           # App entry point
+```
 
-**A:** Absolutely! Just make sure you actually built it yourself by following the course, and that you understand what you did. What is **not allowed** is that you create your own course/videos/articles based on this course's content!
+---
 
+## 🚀 Getting Started
 
-### Q4: Do you accept pull requests?
+### Prerequisites
 
-**A:** No, for the simple reason that I want this repository to contain the _exact_ same code that is shown in the videos. However, please feel free to add an issue if you found one.
+- Node.js v16.13.0 or higher
+- MongoDB database (local or Atlas)
+- Stripe account (for payment integration)
+- SMTP email service (for Nodemailer)
 
+---
 
-## Course Highlights
+## 📡 API Endpoints
 
-1- Project Overview
+All endpoints are prefixed with `/api/v1`.
 
-خلال هذا القسم هيتم استعراض مشروع المتجر الإلكتروني اللي هيتم تنفيذه خلال هذا الكورس ... مهم جدا تتفرج عليه بتركيز عشان تكون عارف ايه المميزات اللي هتتنفذ خلال المشروع ده 
+### Auth — `/api/v1/auth`
 
-2- How Web Work
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| POST | `/signup` | Register a new user | Public |
+| POST | `/login` | Login and get JWT | Public |
+| POST | `/forgotPassword` | Request password reset email | Public |
+| PUT | `/resetPassword/:token` | Reset password with token | Public |
 
-خلال القسم ده هنتكلم شويه عن اساسيات النتورك وازاي الويب بيشتغل عشان كله يكون عنده الاساسيات اللي هنبني عليها اللي جاي وفي نفس الوقت نكون عارف احنا مكانا فين بالظبط وايه دورنا واحنا بنكتب كود
+### Users — `/api/v1/users`
 
-3- Preparing Tools And Environment
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/` | Get all users | Admin |
+| GET | `/:id` | Get single user | Admin |
+| POST | `/` | Create user | Admin |
+| PUT | `/:id` | Update user | Admin |
+| DELETE | `/:id` | Delete user | Admin |
+| GET | `/getMe` | Get my profile | User |
+| PUT | `/updateMe` | Update my profile | User |
+| PUT | `/changeMyPassword` | Change my password | User |
 
-خلال القسم ده هنبدأ نجهز بيئة العمل بتاعتنا والمحرر اللي هنبدأ نشتغل عليه
+### Products — `/api/v1/products`
 
-4- Preparing Express Server And Mongodb
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/` | Get all products (filter, search, sort, paginate) | Public |
+| GET | `/:id` | Get single product | Public |
+| POST | `/` | Create product | Admin/Manager |
+| PUT | `/:id` | Update product | Admin/Manager |
+| DELETE | `/:id` | Delete product | Admin |
 
-خلال القسم ده هنبدأ نجهز الاكسبريس اب بتاعنا ونبدأ ننشأ السيرفر ونربط التطبيق بتاعنا بالداتا بيز وكمان هنشرح الستراكشر بتاع الملفات اللي هنشتغل بيه خلال المشروع اللي هننفذه
+### Categories — `/api/v1/categories`
 
-5- Categories CRUD Operations
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/` | Get all categories | Public |
+| GET | `/:id` | Get single category | Public |
+| POST | `/` | Create category | Admin/Manager |
+| PUT | `/:id` | Update category | Admin/Manager |
+| DELETE | `/:id` | Delete category | Admin |
 
-خلال القسم ده هنبدأ التنفيذ الفعل لفيتشر الاقسام داخل المتجر الالكتروني الاقسام دي ممكن تكون ملابس او الكترونيات ..إلى آخره.
+### Subcategories — `/api/v1/subcategories`
 
-6- Advanced Error Handling & Adding Validation Layer
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/` | Get all subcategories | Public |
+| GET | `/:id` | Get single subcategory | Public |
+| POST | `/` | Create subcategory | Admin/Manager |
+| PUT | `/:id` | Update subcategory | Admin/Manager |
+| DELETE | `/:id` | Delete subcategory | Admin |
 
-من السكاشن المهمة جدا اللي هنشرح فيها ازاي اكسبريس بيتعامل مع الايرورز وهنبدأ نشوف ازاي نمسك الايرورز دي ونتحكم في شكلها والشكل النهائي اللي هيرجع للمستخدم وكمان هنشوف ازاي نمسك باقي الايرورز اللي ممكن تحصل في باقي التطبيق غير اكسبريس
+### Brands — `/api/v1/brands`
 
-7- SubCategories CRUD & Brands CRUD Operations
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/` | Get all brands | Public |
+| GET | `/:id` | Get single brand | Public |
+| POST | `/` | Create brand | Admin/Manager |
+| PUT | `/:id` | Update brand | Admin/Manager |
+| DELETE | `/:id` | Delete brand | Admin |
 
-خلال القسم ده هنبدأ ننفذ الاقسام الفرعية اللي هتكون بتنتمي للاقسام الرئيسية بمعني ان القسم الرئيسي ينتمي ليه قسم او اكثر فرعي .. بالاضافه للعمل علي فيشتر البراندات
+### Reviews — `/api/v1/reviews`
 
-8- Products CRUD Operations
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/` | Get all reviews | Public |
+| GET | `/:id` | Get single review | Public |
+| POST | `/` | Create review | User |
+| PUT | `/:id` | Update review | User (owner) |
+| DELETE | `/:id` | Delete review | User (owner) / Admin |
 
-خلال القسم ده هنبدأ نشتغل علي فيتشر المنتج وهنشوف ازاي نعمل انشاء وتعديل وحذف للمنتج .. بالاضافة ازاي نعمل بحث وازاي نعمل ترتيب للمنتج سواء بسعره او عدد المبيعات للمنتج او غيره .. ازاي كمان نعمل فلتر للمنتج سواء بالقسم اللي بينتمي ليه واو العلامة التجارية وغيره
+### Cart — `/api/v1/cart`
 
-9- Upload Single And Multiple Images And Image Processing
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/` | Get my cart | User |
+| POST | `/` | Add item to cart | User |
+| PUT | `/:itemId` | Update item quantity | User |
+| DELETE | `/:itemId` | Remove item from cart | User |
+| DELETE | `/` | Clear cart | User |
+| POST | `/applyCoupon` | Apply discount coupon | User |
 
-خلال القسم ده هنشوف ازاي نعمل رفع لصوره واحدة او اكتر من صورة .. وهنشوف ازاي نحسن من العمليات اللي هتم علي الصورة عشان يحسن من الاداء .. وهنتعامل مع الايرورز اللي ممكن تظهرك لما ترفع فايل غير الصور .. وهنبدأ نضيف الصور للمنتج بتاعنا
+### Wishlist — `/api/v1/wishlist`
 
-10- Authentication And Authorization
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/` | Get my wishlist | User |
+| POST | `/` | Add product to wishlist | User |
+| DELETE | `/:productId` | Remove from wishlist | User |
 
-خلال القسم ده هنشرح عمليه المصادقة بشكل تفصيلي وهنشوف ازاي تسجيل الدخول وانشاء الحساب ونسيت كلمه المرور وازاي بتعمل التوكن وازاي بنعمل عمليه التحقق عليه ..كمان هنشتغل علي صلاحيات المستخدمين وهيكون عندنا ادمن ومانجر ويوزر عادي وكل واحد ليه صلاحيات مختلفة عن التاني... القسم ده مهم جدا وهتستفاد منه جدا
+### Orders — `/api/v1/orders`
 
-11- Reviews, Wishlist And User Addresses
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/` | Get all orders | Admin/Manager |
+| GET | `/:id` | Get single order | User (owner) / Admin |
+| POST | `/` | Create cash order | User |
+| GET | `/checkout-session/:cartId` | Create Stripe checkout session | User |
+| PUT | `/:id/pay` | Mark order as paid | Admin/Manager |
+| PUT | `/:id/deliver` | Mark order as delivered | Admin/Manager |
 
-خلال القسم ده هنبدأ نشتغل علي التقييمات وهنشوف ازاي هنمكن المتسخدم انه يضيف تقييم علي المنتجات وكمان هنحسب متوسط عدد التقييمات علي المنتج الواحد بالاضافة للعدد الكلي للتقيمات علي المنتج الواحد ، كمان هنشرح ازاي نمكن المسخدم انه يضيف منتج لقائمة المفضلة وفي نفس الوقت يقدر يحذفه ، كمان هنمكن المستخدم من انه يضيف عنوان لدفتر العناوين بتاعه يقدر يستخدمه لما يجي يطلب اوردر .
+### Coupons — `/api/v1/coupons`
 
-12- Coupons And Shopping Cart
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/` | Get all coupons | Admin/Manager |
+| GET | `/:id` | Get single coupon | Admin/Manager |
+| POST | `/` | Create coupon | Admin/Manager |
+| PUT | `/:id` | Update coupon | Admin/Manager |
+| DELETE | `/:id` | Delete coupon | Admin/Manager |
 
-خلال القسم ده هنبدأ نمكن الادمن من انه ينشأ الكوبونات وكل كوبون بيكون ليه تاريخ معين ينتهي فيه ونسبة خصم معينة بيحددها الادمن ... والمستخدم هيقدر يستخدم الكوبون ده عشان يتسفاد من الخصم .. كمان هنمكن المستخدم من انه ينشأ سلة المنتجات اللي هيبدأ يضيف فيها المنتجات اللي عايز يشتريها ويعدل يختار ويعدل في كمية المنتجات لو متاح كمية منها في المخزن بالاضافة انه يقدر يضيف كوبون خصم علي السلة .
+### Addresses — `/api/v1/addresses`
 
-13- Cash And Online Orders, Online Payments And Deployments
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/` | Get my addresses | User |
+| POST | `/` | Add new address | User |
+| DELETE | `/:addressId` | Remove address | User |
 
-خلال القسم ده هنبدأ نشتغل علي الاورد ر او الطلبية سواء الاوردر ده هيتم دفعه كاش او عند الاستلام او الاوردر ده هيتم دفعه من خلال بطاقة دفع او محفظة الكترنية زي ابل باي او غيره .. هيتم الربط مع بوابة الدفع ونشوف ايه وسائل الدفع اللي بتوفرها بوابة الدفع وهنعمل عميلة الدفع من خلالها ... وهنشوف ازاي بنشوف عملية الدفع نجحت ولا لا .. وازاي نعمل اوردر في حالة نجاح عملية الدفع .. هنتكلم بالتفصيل عن الدفع الكاش والدفع الالكتروني .. وفي الاخر هنرفع التطبيق علي هيروكو عشان تقدر تشاركه مع الفرونت اند او تحط اللينك في البرورتفوليو بتاعك
+---
 
-14- Security
+## 🔑 Authentication
 
-خلال القسم ده هنتكلم شويه عن وسائل الامان اللي ممكن تستخدمها عشان تأمن التطبيق بتاعك
+Protected routes require a valid JWT in the `Authorization` header:
 
-15- Enhancements
+```
+Authorization: Bearer <your_jwt_token>
+```
 
-خلال القسم ده هنضيف فيه التحسينات اللي هتتضاف في الكورس ... بالاضافة لو فيه مشاكل ظهرت هنسجلها فيديو ونضيفه في السكشن ده
+Tokens are obtained from `/api/v1/auth/login` or `/api/v1/auth/signup`. Tokens expire based on `JWT_EXPIRE_TIME` in your `.env`.
 
-16- Appendix
+**Roles:**
+- `user` — standard customer access
+- `manager` — can manage products, categories, orders
+- `admin` — full access including user management
 
-خلال القسم ده هضفلكم شويه دروس عن الجافا سكريبت عشان ترجعو ليها لو عايز تتاسس فيها عشان تساعدك وانت شغال في الكورس
+---
 
+## 🛡 Security
 
+- **Rate Limiting** — 100 requests per 15 minutes per IP
+- **CORS** — Cross-origin requests enabled
+- **HPP Protection** — HTTP Parameter Pollution prevention
+- **Password Hashing** — Bcrypt with salt rounds
+- **Request Compression** — Gzip compression on responses
+- **Input Validation** — Express-validator on all inputs
+- **Environment Secrets** — All sensitive values in `.env`, never committed
+
+---
+
+## 📦 Response Format
+
+All responses follow a consistent JSON structure:
+
+**Success:**
+```json
+{
+  "status": "success",
+  "results": 10,
+  "data": { }
+}
+```
+
+**Error:**
+```json
+{
+  "status": "fail",
+  "message": "Error description here"
+}
+```
+
+---
+
+## 💳 Stripe Webhooks
+
+For Stripe payment confirmation in production, configure a webhook endpoint in your Stripe dashboard pointing to:
+
+```
+POST /api/v1/orders/webhook-checkout
+```
+
+Set the `STRIPE_WEBHOOK_SECRET` in your `.env` to the signing secret provided by Stripe.
